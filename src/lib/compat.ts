@@ -3,6 +3,9 @@ import type { ApiAvailability, ApiName } from "@engine";
 /** The first Chrome with the Summarizer, Translator and Language Detector APIs. */
 export const MIN_CHROME = 138;
 
+/** The first Chrome with the Prompt API for web pages (before it, only for extensions). Most demos need it. */
+export const MIN_CHROME_PROMPT = 148;
+
 /** The APIs that are stable; the others (Proofreader, Writer, Rewriter) may be missing in a good setup. */
 const STABLE: ApiName[] = ["prompt", "summarizer", "translator", "detector"];
 
@@ -12,10 +15,10 @@ export type Verdict = "compatible" | "check" | "incompatible";
 
 /** What a row says: the key of a sentence in the texts, and the values it takes. */
 export type DetailKey =
-  | "browserChrome" | "browserOld" | "browserChromium" | "browserOther"
+  | "browserChrome" | "browserOld" | "browserNoPrompt" | "browserChromium" | "browserOther"
   | "systemDesktop" | "systemMobile" | "systemChromeOS" | "systemUnknown"
   | "apisAll" | "apisOptional" | "apisSome" | "apisNone"
-  | "modelReady" | "modelDownload" | "modelDownloading" | "modelUnavailable" | "modelNone"
+  | "modelReady" | "modelDownload" | "modelDownloading" | "modelUnavailable" | "modelUnknown" | "modelNone"
   | "coresOk" | "coresLow" | "coresUnknown"
   | "memoryUnknown" | "memoryLow" | "memoryCapped" | "memoryOk"
   | "gpuAdapter" | "gpuNone" | "gpuUnsupported";
@@ -82,14 +85,20 @@ export async function readBrowser(nav: NavigatorLike = navigator as unknown as N
 
 const GENERIC_BRAND = /not.?a.?brand|^chromium$/i;
 
-function browserCheck(info: BrowserInfo): Check {
+/**
+ * What a Chrome version means here. Between the first Chrome with the task APIs and the first with the Prompt
+ * API, a missing Prompt API is the reason to warn; if the browser does have it (a flag, a trial), the version
+ * does not matter.
+ */
+function versionCheck(version: number, states: Record<ApiName, ApiAvailability>): Check {
+  if (version < MIN_CHROME) return { id: "browser", status: "fail", detail: "browserOld", args: [version, MIN_CHROME] };
+  if (version < MIN_CHROME_PROMPT && states.prompt === "unsupported") return { id: "browser", status: "warn", detail: "browserNoPrompt", args: [version, MIN_CHROME_PROMPT] };
+  return { id: "browser", status: "ok", detail: "browserChrome", args: [version] };
+}
+
+function browserCheck(info: BrowserInfo, states: Record<ApiName, ApiAvailability>): Check {
   const chrome = info.brands?.find((b) => b.brand === "Google Chrome");
-  if (chrome) {
-    const version = Number.parseInt(chrome.version, 10);
-    return version >= MIN_CHROME
-      ? { id: "browser", status: "ok", detail: "browserChrome", args: [version] }
-      : { id: "browser", status: "fail", detail: "browserOld", args: [version, MIN_CHROME] };
-  }
+  if (chrome) return versionCheck(Number.parseInt(chrome.version, 10), states);
   const chromium = info.brands?.find((b) => b.brand === "Chromium");
   if (chromium) {
     const other = info.brands?.find((b) => !GENERIC_BRAND.test(b.brand));
@@ -98,12 +107,7 @@ function browserCheck(info: BrowserInfo): Check {
   // No client hints: Firefox, Safari, or a Chrome too old to have them.
   const ua = info.userAgent;
   const match = /Chrome\/(\d+)/.exec(ua);
-  if (match && !/Edg\/|OPR\/|Firefox\//.test(ua)) {
-    const version = Number(match[1]);
-    return version >= MIN_CHROME
-      ? { id: "browser", status: "ok", detail: "browserChrome", args: [version] }
-      : { id: "browser", status: "fail", detail: "browserOld", args: [version, MIN_CHROME] };
-  }
+  if (match && !/Edg\/|OPR\/|Firefox\//.test(ua)) return versionCheck(Number(match[1]), states);
   const name = /Firefox\//.test(ua) ? "Firefox" : /Edg\//.test(ua) ? "Edge" : /Safari\//.test(ua) ? "Safari" : "?";
   return { id: "browser", status: "fail", detail: "browserOther", args: [name] };
 }
@@ -139,6 +143,8 @@ function modelCheck(states: Record<ApiName, ApiAvailability>): Check {
     case "downloadable": return { id: "model", status: "info", detail: "modelDownload", args: [] };
     case "downloading": return { id: "model", status: "info", detail: "modelDownloading", args: [] };
     case "unavailable": return { id: "model", status: "fail", detail: "modelUnavailable", args: [] };
+    // No answer in time is not a no: a slow first answer must not fail a working setup
+    case "unknown": return { id: "model", status: "info", detail: "modelUnknown", args: [] };
     default: return { id: "model", status: "fail", detail: "modelNone", args: [] };
   }
 }
@@ -173,7 +179,7 @@ function hardwareChecks(info: BrowserInfo): Check[] {
  * the model is not already available, because an available model has shown that the device can run it.
  */
 export function evaluate(info: BrowserInfo, states: Record<ApiName, ApiAvailability>): CompatReport {
-  const required = [browserCheck(info), systemCheck(info), apisCheck(states), modelCheck(states)];
+  const required = [browserCheck(info, states), systemCheck(info), apisCheck(states), modelCheck(states)];
   const hardware = hardwareChecks(info);
   const checks = [...required, ...hardware];
   const modelReady = states.prompt === "available";

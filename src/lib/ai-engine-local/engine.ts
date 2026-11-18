@@ -102,19 +102,28 @@ export function createLocalAIEngine(config: EngineConfig = {}): LocalAIEngine {
             case "writer": return await adapters.writer.availability({ tone: "neutral", length: "medium" });
             case "rewriter": return await adapters.rewriter.availability({ tone: "as-is", length: "as-is" });
           }
-        } catch {
-          return "unavailable";
+        } catch (err) {
+          // Only a clear "not supported" is a no; a transient error (the page not active yet) is not an answer
+          // (the adapters wrap the DOM error and keep it as the cause)
+          const original = (err as { cause?: { name?: string } } | null)?.cause ?? err;
+          return (original as { name?: string } | null)?.name === "NotSupportedError" ? "unavailable" : "unknown";
         }
       };
-      const timeout = new Promise<"unavailable">((resolve) => setTimeout(() => resolve("unavailable"), timeoutMs));
-      const entries = await Promise.all(
-        API_NAMES.map(async (api) => {
-          const state = await Promise.race([probe(api), timeout]);
-          onEach?.(api, state);
-          return [api, state] as const;
-        }),
-      );
-      return Object.fromEntries(entries) as ApiStatus;
+      // The first answer can be slow while Chrome starts the model: giving up is "unknown", never "unavailable"
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<"unknown">((resolve) => (timer = setTimeout(() => resolve("unknown"), timeoutMs)));
+      try {
+        const entries = await Promise.all(
+          API_NAMES.map(async (api) => {
+            const state = await Promise.race([probe(api), timeout]);
+            onEach?.(api, state);
+            return [api, state] as const;
+          }),
+        );
+        return Object.fromEntries(entries) as ApiStatus;
+      } finally {
+        clearTimeout(timer);
+      }
     },
 
     async prepare(task, options, signal) {

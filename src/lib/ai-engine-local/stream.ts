@@ -14,6 +14,9 @@ export async function* readChunks(
     while (true) {
       if (signal?.aborted) throw new AIEngineError("aborted", messageFor("aborted"), api);
       const { done, value } = await reader.read();
+      // A Stop that lands during a pending read cancels the reader, and that read then ends the stream as if
+      // it were complete: only the signal tells a finished answer from a stopped one.
+      if (signal?.aborted) throw new AIEngineError("aborted", messageFor("aborted"), api);
       if (done) return;
       yield value;
     }

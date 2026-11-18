@@ -17,7 +17,8 @@ export const API_NAMES: readonly ApiName[] = [
   "rewriter",
 ];
 
-export type ApiAvailability = Availability | "unsupported";
+/** `unknown`: Chrome did not answer in time, or answered with an error that is not a clear no. It never blocks anything. */
+export type ApiAvailability = Availability | "unsupported" | "unknown";
 export type ApiStatus = Record<ApiName, ApiAvailability>;
 
 /** The global object that exposes the built-in AI constructors (`self` in a page). */

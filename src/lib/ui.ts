@@ -52,6 +52,7 @@ const TAG_COLOR: Record<ApiAvailability, string> = {
   downloading: "yellow",
   unavailable: "red",
   unsupported: "gray",
+  unknown: "gray",
 };
 
 export function setTag(el: HTMLElement, state: ApiAvailability): void {

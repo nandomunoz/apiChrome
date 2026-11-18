@@ -21,7 +21,6 @@ export function createWriterAdapter(deps: AdapterDeps): WriterAdapter {
       expectedContextLanguages: [language],
       outputLanguage: language,
     }),
-    extras: (opts) => (opts.context ? { sharedContext: opts.context } : {}),
-    key: (opts) => JSON.stringify([opts.tone, opts.length, opts.context ?? ""]),
+    key: (opts) => JSON.stringify([opts.tone, opts.length]),
   });
 }

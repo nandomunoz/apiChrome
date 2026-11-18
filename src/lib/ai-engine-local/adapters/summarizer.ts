@@ -22,7 +22,6 @@ export function createSummarizerAdapter(deps: AdapterDeps): SummarizerAdapter {
       expectedContextLanguages: [language],
       outputLanguage: language,
     }),
-    extras: (opts) => (opts.context ? { sharedContext: opts.context } : {}),
-    key: (opts) => JSON.stringify([opts.type, opts.length, opts.format, opts.context ?? ""]),
+    key: (opts) => JSON.stringify([opts.type, opts.length, opts.format]),
   });
 }

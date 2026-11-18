@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { AIEngineError, createLocalAIEngine } from "@engine";
 import { mockEnv } from "./mocks";
 
@@ -23,10 +23,32 @@ describe("status", () => {
     const engine = createLocalAIEngine({ env, language: "en" });
     const heard: string[] = [];
     const status = await engine.status((api) => heard.push(api), 30);
-    expect(status.prompt).toBe("unavailable");
+    // No answer in time is "unknown", not "no": a slow first answer must not read as an unusable device
+    expect(status.prompt).toBe("unknown");
     expect(status.summarizer).toBe("available");
     expect(heard).toHaveLength(7);
     expect(heard.indexOf("summarizer")).toBeLessThan(heard.indexOf("prompt"));
+  });
+
+  it("tells a clear no from an error that is not an answer", async () => {
+    const { env } = mockEnv();
+    const failing = (name: string) =>
+      ({ availability: async () => { throw Object.assign(new Error(name), { name }); }, create: async () => ({}) }) as unknown as typeof LanguageModel;
+    env.LanguageModel = failing("NotSupportedError");
+    expect((await createLocalAIEngine({ env, language: "en" }).status()).prompt).toBe("unavailable");
+    env.LanguageModel = failing("InvalidStateError");
+    expect((await createLocalAIEngine({ env, language: "en" }).status()).prompt).toBe("unknown");
+  });
+
+  it("leaves no timer running once every API has answered", async () => {
+    vi.useFakeTimers();
+    try {
+      const { engine } = make();
+      await engine.status();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("falls back to English for a language the model does not take", () => {

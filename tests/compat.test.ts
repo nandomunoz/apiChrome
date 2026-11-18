@@ -37,6 +37,32 @@ describe("compatibility", () => {
     expect(detail(old, states(), "browser")).toBe("browserOld");
   });
 
+  it("asks to update a Chrome that has the task APIs but not the Prompt API", () => {
+    const s = states({ prompt: "unsupported" });
+    const browser = evaluate(chrome(), s).checks.find((c) => c.id === "browser");
+    expect(browser).toMatchObject({ status: "warn", detail: "browserNoPrompt", args: [140, 148] });
+    // Without the Prompt API there is no model to check, so the device still cannot run most demos
+    expect(evaluate(chrome(), s).verdict).toBe("incompatible");
+  });
+
+  it("does not look at the version when the Prompt API is there", () => {
+    expect(detail(chrome(), states(), "browser")).toBe("browserChrome");
+    expect(detail(chrome(), states({ prompt: "downloadable" }), "browser")).toBe("browserChrome");
+  });
+
+  it("accepts Chrome 148 and rejects 137 whatever the APIs say", () => {
+    const at = (version: number) => chrome({ brands: [{ brand: "Google Chrome", version: String(version) }] });
+    expect(detail(at(148), states({ prompt: "unsupported" }), "browser")).toBe("browserChrome");
+    expect(detail(at(138), states({ prompt: "unsupported" }), "browser")).toBe("browserNoPrompt");
+    expect(detail(at(137), states(), "browser")).toBe("browserOld");
+  });
+
+  it("does not fail a device because Chrome was slow to answer", () => {
+    const report = evaluate(chrome(), states({ prompt: "unknown" }));
+    expect(report.checks.find((c) => c.id === "model")).toMatchObject({ status: "info", detail: "modelUnknown" });
+    expect(report.verdict).not.toBe("incompatible");
+  });
+
   it("rejects browsers that are not Chrome", () => {
     const firefox = { userAgent: "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0", gpu: { state: "unsupported" as const } };
     const report = evaluate(firefox, states({ prompt: "unsupported", summarizer: "unsupported", translator: "unsupported", detector: "unsupported", proofreader: "unsupported", writer: "unsupported", rewriter: "unsupported" }));

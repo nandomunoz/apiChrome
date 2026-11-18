@@ -36,10 +36,10 @@ Cada demo empieza con una guía que explica qué hace y cómo se usa, paso a pas
 
 ## Requisitos
 
-- Chrome de escritorio reciente con Gemini Nano (Chrome 138 o superior para Summarizer, Translator y Language Detector).
+- Chrome de escritorio reciente con Gemini Nano (Chrome 138 o superior para Summarizer, Translator y Language Detector; la Prompt API para páginas web llega con Chrome 148).
 - Los modelos se descargan la primera vez y solo tras una acción del usuario: el botón Preparar de la página de estado.
 - Si algo falla, `chrome://on-device-internals` muestra el estado del modelo.
-- Proofreader es experimental y Writer y Rewriter están obsoletas. Cuando faltan, el motor usa la Prompt API y lo indica en el resultado (`fallback`).
+- Proofreader, Writer y Rewriter son experimentales (prueba de desarrollador). Cuando faltan, el motor usa la Prompt API y lo indica en el resultado (`fallback`).
 
 ## Desarrollo
 

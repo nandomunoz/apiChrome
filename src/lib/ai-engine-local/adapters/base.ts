@@ -64,16 +64,30 @@ export function createAdapter<Opts, Inst extends { destroy(): unknown }>(
       const cls = ctor();
       if (!cls) throw new AIEngineError("unsupported", messageFor("unsupported"), api);
       const core = config.core(opts, deps);
-      try {
-        const state = await withAbort(cls.availability(core), signal, api);
-        if (state === "unavailable") {
-          throw new AIEngineError("unavailable", messageFor("unavailable"), api);
+      // The instance is shared through the cache, so it must outlive the run that created it: Stop cancels the
+      // creation (the download) through a controller of its own, which is let go as soon as the creation ends.
+      const create = () => {
+        const controller = new AbortController();
+        const stop = () => controller.abort();
+        signal?.addEventListener("abort", stop, { once: true });
+        return cls
+          .create({ ...core, ...config.extras?.(opts, deps), monitor, signal: controller.signal })
+          .finally(() => signal?.removeEventListener("abort", stop));
+      };
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const state = await withAbort(cls.availability(core), signal, api);
+          if (state === "unavailable") {
+            throw new AIEngineError("unavailable", messageFor("unavailable"), api);
+          }
+          return await withAbort(cache.get(config.key(opts), create), signal, api);
+        } catch (err) {
+          const error = normalizeError(err, api);
+          // A creation shared with another run that pressed Stop ends aborted for this one too, which did not
+          // press it: the cache has already dropped it, so this one starts again.
+          if (error.code === "aborted" && !signal?.aborted && attempt < 1) continue;
+          throw error;
         }
-        const create = () =>
-          cls.create({ ...core, ...config.extras?.(opts, deps), monitor });
-        return await withAbort(cache.get(config.key(opts), create), signal, api);
-      } catch (err) {
-        throw normalizeError(err, api);
       }
     },
 

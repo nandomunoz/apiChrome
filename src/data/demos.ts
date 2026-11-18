@@ -33,7 +33,7 @@ export const DEMOS: Demo[] = [
   { slug: "summary-of-summaries", group: "text", uses: ["summarizer"], requires: ["summarizer"], maturity: "stable", source: { label: "Summary of Summaries", url: `${WEB_AI}/summary-of-summaries/` } },
   { slug: "translate", group: "language", uses: ["detector", "translator"], requires: ["translator"], maturity: "stable", source: { label: "Translator + Language Detector", url: `${WEB_AI}/translation-language-detection-api-playground/` } },
   { slug: "proofread", group: "writing", uses: ["proofreader", "prompt"], requires: ["prompt"], maturity: "experimental", source: { label: "Proofreader Playground", url: `${WEB_AI}/proofreader-api-playground/` } },
-  { slug: "write", group: "writing", uses: ["writer", "rewriter", "prompt"], requires: ["prompt"], maturity: "deprecated", source: { label: "Writer / Rewriter Playground", url: `${WEB_AI}/writer-rewriter-api-playground/` } },
+  { slug: "write", group: "writing", uses: ["writer", "rewriter", "prompt"], requires: ["prompt"], maturity: "experimental", source: { label: "Writer / Rewriter Playground", url: `${WEB_AI}/writer-rewriter-api-playground/` } },
   { slug: "assistant", group: "writing", uses: ["proofreader", "prompt"], requires: ["prompt"], maturity: "experimental" },
 ];
 
@@ -43,8 +43,8 @@ export const API_INFO: Record<ApiName, { label: string; global: string; maturity
   translator: { label: "Translator API", global: "Translator", maturity: "stable" },
   detector: { label: "Language Detector API", global: "LanguageDetector", maturity: "stable" },
   proofreader: { label: "Proofreader API", global: "Proofreader", maturity: "experimental" },
-  writer: { label: "Writer API", global: "Writer", maturity: "deprecated" },
-  rewriter: { label: "Rewriter API", global: "Rewriter", maturity: "deprecated" },
+  writer: { label: "Writer API", global: "Writer", maturity: "experimental" },
+  rewriter: { label: "Rewriter API", global: "Rewriter", maturity: "experimental" },
 };
 
 export const RESOURCES: { id: string; label: string; url: string }[] = [

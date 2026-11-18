@@ -198,7 +198,7 @@ const en: Guides = {
     write: {
       title: "Writer and rewriter",
       summary: "Write from an instruction or rewrite a text in another tone and length.",
-      what: "Two modes. Write creates a new text from an instruction. Rewrite changes the tone and the length of a text you already have. Both APIs are deprecated in Chrome: when they are missing, the Prompt API does the job.",
+      what: "Two modes. Write creates a new text from an instruction. Rewrite changes the tone and the length of a text you already have. Both APIs are in a developer trial in Chrome: when they are missing, the Prompt API does the job.",
       how: [
         "Write tab: describe what you need (“An email to…”), add context if it helps, choose tone and length, and press Write.",
         "Rewrite tab: paste a text, choose the tone (as is, more formal, more casual) and the length (as is, shorter, longer), and press Rewrite.",
@@ -302,7 +302,7 @@ const en: Guides = {
           {
             id: "fallback",
             q: "Why does a result say “fallback”?",
-            a: ["The Proofreader is experimental, and the Writer and the Rewriter are deprecated. When Chrome does not have one of them, the site asks the Prompt API to do the job and marks the result as a fallback. The text is still valid, but it may differ from what the dedicated API would give."],
+            a: ["The Proofreader, the Writer and the Rewriter are experimental (a developer trial). When Chrome does not have one of them, the site asks the Prompt API to do the job and marks the result as a fallback. The text is still valid, but it may differ from what the dedicated API would give."],
           },
         ],
       },
@@ -337,8 +337,8 @@ const en: Guides = {
     translator: { note: "On-device translation, one model per language pair", what: "Translates between languages; each pair downloads its own small model." },
     detector: { note: "Which language a text is in", what: "Says which language a text is written in, with a confidence." },
     proofreader: { note: "Origin trial; falls back to the Prompt API", what: "Finds spelling, punctuation and grammar mistakes and explains them." },
-    writer: { note: "Deprecated; falls back to the Prompt API", what: "Writes a new text from an instruction, in a tone and length." },
-    rewriter: { note: "Deprecated; falls back to the Prompt API", what: "Rewrites a text in another tone or length." },
+    writer: { note: "Developer trial; falls back to the Prompt API", what: "Writes a new text from an instruction, in a tone and length." },
+    rewriter: { note: "Developer trial; falls back to the Prompt API", what: "Rewrites a text in another tone or length." },
   },
   home: {
     intro:
@@ -518,7 +518,7 @@ const es: Guides = {
     write: {
       title: "Escritor y reescritor",
       summary: "Escribe a partir de una instrucción o reescribe un texto con otro tono y longitud.",
-      what: "Dos modos. Escribir crea un texto nuevo a partir de una instrucción. Reescribir cambia el tono y la longitud de un texto que ya tienes. Ambas APIs están obsoletas en Chrome: cuando faltan, la Prompt API hace el trabajo.",
+      what: "Dos modos. Escribir crea un texto nuevo a partir de una instrucción. Reescribir cambia el tono y la longitud de un texto que ya tienes. Ambas APIs están en prueba de desarrollador en Chrome: cuando faltan, la Prompt API hace el trabajo.",
       how: [
         "Pestaña Escribir: describe lo que necesitas («Un email a…»), añade contexto si ayuda, elige tono y longitud y pulsa Escribir.",
         "Pestaña Reescribir: pega un texto, elige el tono (igual, más formal, más informal) y la longitud (igual, más corto, más largo) y pulsa Reescribir.",
@@ -622,7 +622,7 @@ const es: Guides = {
           {
             id: "fallback",
             q: "¿Por qué un resultado dice «alternativa»?",
-            a: ["El Corrector es experimental, y el Escritor y el Reescritor están obsoletos. Cuando Chrome no tiene alguno de ellos, el sitio le pide el trabajo a la Prompt API y marca el resultado como alternativa. El texto sigue siendo válido, pero puede diferir de lo que daría la API específica."],
+            a: ["El Corrector, el Escritor y el Reescritor son experimentales (prueba de desarrollador). Cuando Chrome no tiene alguno de ellos, el sitio le pide el trabajo a la Prompt API y marca el resultado como alternativa. El texto sigue siendo válido, pero puede diferir de lo que daría la API específica."],
           },
         ],
       },
@@ -657,8 +657,8 @@ const es: Guides = {
     translator: { note: "Traducción en el dispositivo, un modelo por par de idiomas", what: "Traduce entre idiomas; cada par descarga su propio modelo pequeño." },
     detector: { note: "En qué idioma está un texto", what: "Dice en qué idioma está escrito un texto, con un nivel de confianza." },
     proofreader: { note: "Prueba de origen; recurre a la Prompt API", what: "Encuentra errores de ortografía, puntuación y gramática y los explica." },
-    writer: { note: "Obsoleta; recurre a la Prompt API", what: "Escribe un texto nuevo a partir de una instrucción, con un tono y una longitud." },
-    rewriter: { note: "Obsoleta; recurre a la Prompt API", what: "Reescribe un texto con otro tono o longitud." },
+    writer: { note: "Prueba de desarrollador; recurre a la Prompt API", what: "Escribe un texto nuevo a partir de una instrucción, con un tono y una longitud." },
+    rewriter: { note: "Prueba de desarrollador; recurre a la Prompt API", what: "Reescribe un texto con otro tono o longitud." },
   },
   home: {
     intro:

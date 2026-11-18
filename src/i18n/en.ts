@@ -36,6 +36,7 @@ export const en = {
     downloading: "Downloading",
     unavailable: "Unavailable",
     unsupported: "Not in this browser",
+    unknown: "No answer yet",
   },
   maturity: {
     stable: "Stable",
@@ -137,6 +138,7 @@ export const en = {
     detail: {
       browserChrome: (version: number) => `Google Chrome ${version}.`,
       browserOld: (version: number, min: number) => `Chrome ${version} is too old: update to ${min} or later.`,
+      browserNoPrompt: (version: number, min: number) => `Chrome ${version} has the Summarizer, Translator and Language Detector, but the Prompt API for web pages arrives in Chrome ${min}, and most demos need it. Update Chrome.`,
       browserChromium: (name: string, version: number) => `${name} ${version}, based on Chromium but not Google Chrome: the APIs may be missing.`,
       browserOther: (name: string) => `${name === "?" ? "This browser" : name} does not have these APIs. Use Chrome on desktop.`,
       systemDesktop: (platform: string) => `${platform}, a desktop system.`,
@@ -151,6 +153,7 @@ export const en = {
       modelDownload: () => "The device can run it; the model still has to be downloaded. Press Prepare below.",
       modelDownloading: () => "The model is downloading.",
       modelUnavailable: () => "Chrome says the model is not available on this device: check the hardware and disk requirements.",
+      modelUnknown: () => "Chrome did not answer in time. The first answer can be slow while the model starts: press Check again.",
       modelNone: () => "There is no Prompt API, so there is no model to check.",
       coresOk: (n: number) => `${n} cores (4 or more are needed without a GPU).`,
       coresLow: (n: number) => `${n} cores: 4 or more are needed to run the model on the CPU.`,

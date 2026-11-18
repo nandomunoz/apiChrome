@@ -17,7 +17,7 @@ const rewriterOpts = (o: TaskSpec["rewrite"]["options"]): RewriterOptions => ({
   context: o.context,
 });
 
-/** Writer is deprecated: when it is missing, the Prompt API writes. */
+/** Writer is a developer trial: when it is missing, the Prompt API writes. */
 export const write: Handler<"write"> = {
   api: "writer",
   warm: async (ctx, options) =>
@@ -43,7 +43,7 @@ export const write: Handler<"write"> = {
 const REWRITE_TONE = { "as-is": "the same", "more-formal": "a more formal", "more-casual": "a more casual" } as const;
 const REWRITE_LENGTH = { "as-is": "about the same length", shorter: "shorter", longer: "longer" } as const;
 
-/** Rewriter is deprecated: when it is missing, the Prompt API rewrites. */
+/** Rewriter is a developer trial: when it is missing, the Prompt API rewrites. */
 export const rewrite: Handler<"rewrite"> = {
   api: "rewriter",
   warm: async (ctx, options) =>
