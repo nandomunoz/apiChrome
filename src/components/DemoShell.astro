@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import HeroArt from "./HeroArt.astro";
 import { API_INFO, demoBySlug } from "../data/demos";
 import { pageHref } from "../i18n";
 import { i18n } from "../i18n/server";
@@ -12,28 +13,29 @@ interface Props extends Omit<HTMLAttributes<"section">, "slot"> {
 const { slug, heading, class: className, ...rest } = Astro.props;
 const { lang, m, g } = i18n(Astro.url);
 const demo = demoBySlug(slug);
+const home = slug === "";
 const guide = g.demos[slug]!;
 const notice = demo.maturity === "experimental" ? m.maturity.experimentalNotice : demo.maturity === "deprecated" ? m.maturity.deprecatedNotice : null;
 ---
 
 <section class:list={["o-stack", className]} data-demo={slug} {...rest}>
-  <header class="o-stack">
-    <h1>{heading ?? guide.title}</h1>
-    <p>{guide.summary}</p>
-    {
-      slug && (
-        <div class="demo-head">
-          {
-            demo.uses.map((api) => (
-              <span class="api-pill">
-                {API_INFO[api].label}
-                <span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span>
-              </span>
-            ))
-          }
-        </div>
-      )
-    }
+  <header class:list={["o-stack", home && "hero"]}>
+    <div class:list={["o-stack", home && "hero__copy"]}>
+      <h1>{heading ?? guide.title}</h1>
+      <p class:list={[home && "hero__lead"]}>{guide.summary}</p>
+      <div class="demo-head">
+        {
+          demo.uses.map((api) => (
+            <span class="api-pill">
+              {API_INFO[api].label}
+              <span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span>
+            </span>
+          ))
+        }
+      </div>
+      <slot name="hero" />
+    </div>
+    {home && <div class="hero__art" aria-hidden="true"><HeroArt /></div>}
     {
       notice && (
         <div class={`luz-alert luz-alert--${demo.maturity === "deprecated" ? "warning" : "info"}`}>
@@ -83,5 +85,14 @@ const notice = demo.maturity === "experimental" ? m.maturity.experimentalNotice 
       )
     }
   </header>
-  <slot />
+  {
+    home ? (
+      <slot />
+    ) : (
+      <div class="workbench">
+        <div class="workbench__bar"><span class="workbench__label">{m.guide.try}</span></div>
+        <div class="workbench__body o-stack"><slot /></div>
+      </div>
+    )
+  }
 </section>

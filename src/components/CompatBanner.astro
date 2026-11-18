@@ -1,0 +1,24 @@
+---
+import { pageHref } from "../i18n";
+import { i18n } from "../i18n/server";
+
+const { lang, m } = i18n(Astro.url);
+const t = m.compat;
+---
+
+<div class="compat-banner" data-compat-banner role="status" hidden>
+  <div class="compat-banner__inner">
+    <span class="compat-banner__icon" aria-hidden="true">
+      <svg class="compat-banner__glyph" data-glyph="error" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M6.4 6.4l11.2 11.2" /></svg>
+      <svg class="compat-banner__glyph" data-glyph="warning" viewBox="0 0 24 24" focusable="false"><path d="M12 4L21 19.5H3z" /><path d="M12 10v4.5M12 16.8v.2" /></svg>
+    </span>
+    <a class="compat-banner__text" href={`${pageHref(lang)}#faq-unavailable`}>
+      <strong data-banner-title></strong>
+      <span data-banner-body></span>
+    </a>
+    <a class="compat-banner__guide" href="https://developer.chrome.com/docs/ai/get-started">{t.guide}</a>
+    <button class="compat-banner__close" type="button" data-banner-close aria-label={t.dismiss}>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </div>
+</div>

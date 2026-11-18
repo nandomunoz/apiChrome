@@ -56,6 +56,7 @@ export const en = {
     how: "How to use it",
     tip: "Good to know",
     basedOn: "Based on the",
+    try: "Try it",
   },
   common: {
     run: "Run",
@@ -104,6 +105,7 @@ export const en = {
     recheck: "Check again",
     help: "What can I do?",
     guide: "Chrome's setup guide",
+    dismiss: "Dismiss",
     tableAria: "Compatibility checks",
     colCheck: "Check",
     colResult: "Result",

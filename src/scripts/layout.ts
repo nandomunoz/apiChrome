@@ -1,3 +1,4 @@
+import "./compat-banner";
 import { initCopyButtons, initTabs } from "@luz-ds/core";
 import { LANG_KEY } from "../i18n";
 import { MODEL_LANGUAGE_KEY } from "../lib/engine";

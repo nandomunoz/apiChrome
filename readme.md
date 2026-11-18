@@ -1,6 +1,6 @@
 # Chrome Local AI
 
-Demos de las APIs de IA integradas de Chrome (Gemini Nano). Todo se ejecuta en el dispositivo del usuario: no hay servidor y, una vez descargado el modelo, tampoco hace falta conexión. El sitio es bilingüe (inglés y español) y está construido con [Astro](https://astro.build/), TypeScript y [Luz DS](https://github.com/nandovejer/luz).
+Demos de las APIs de IA integradas de Chrome (Gemini Nano). Todo se ejecuta en el dispositivo del usuario: no hay servidor y, una vez descargado el modelo, tampoco hace falta conexión. El sitio es bilingüe (inglés y español) y está construido con [Astro](https://astro.build/), TypeScript y [Luz DS](https://github.com/nandomunoz/luz).
 
 ## Contenido
 
@@ -118,5 +118,5 @@ tests/             Vitest: motor, fragmentación de texto y textos
 
 ## Créditos
 
-- [Luz DS](https://github.com/nandovejer/luz): sistema de diseño (`@luz-ds/tokens`, `core` y `catalog`).
+- [Luz DS](https://github.com/nandomunoz/luz): sistema de diseño (`@luz-ds/tokens`, `core` y `catalog`).
 - [Chrome Built-in AI](https://developer.chrome.com/docs/ai/built-in) y los [Web AI demos](https://chrome.dev/web-ai-demos/), en los que se basan las demos.

@@ -21,18 +21,18 @@ const parts = (text: string) => text.split("`").map((value, i) => ({ value, code
 
 <AppLayout slug="">
   <DemoShell slug="" heading={m.site.name}>
+    <div class="o-row hero__cta" slot="hero">
+      <a class="luz-btn luz-btn--primary" href="#apis">{t.yourBrowser}</a>
+      <a class="luz-btn luz-btn--outline" href="#demos">{t.demos}</a>
+    </div>
+
+    <div class="home-grid">
+    <div class="home-main o-stack">
     <p>{g.home.intro}</p>
 
     <CompatCheck />
 
-    <section class="o-stack">
-      <h2>{g.home.startHeading}</h2>
-      <ol class="guide__steps">
-        {g.home.start.map((step) => <li>{step}</li>)}
-      </ol>
-    </section>
-
-    <section class="o-stack">
+    <section class="o-stack" id="apis">
       <h2>{t.yourBrowser}</h2>
       <p class="meta">{g.home.apisIntro}</p>
       <div class="luz-table-wrap" role="region" aria-label={t.tableAria} tabindex="0">
@@ -96,7 +96,7 @@ const parts = (text: string) => text.split("`").map((value, i) => ({ value, code
       </div>
     </section>
 
-    <section class="o-stack">
+    <section class="o-stack" id="demos">
       <h2>{t.demos}</h2>
       <p class="meta">{g.home.demosIntro}</p>
       <ul class="o-grid o-grid--auto demo-grid">
@@ -138,12 +138,24 @@ const parts = (text: string) => text.split("`").map((value, i) => ({ value, code
       <p class="luz-faq__more">{faq.more} <a href="https://developer.chrome.com/docs/ai/get-started">{faq.moreLink}</a></p>
     </luz-faq>
 
-    <section class="o-stack">
-      <h2>{t.resources}</h2>
-      <ul>
-        {RESOURCES.map((r) => <li><a href={r.url}>{r.label}</a>: {g.resources[r.id]!.note}</li>)}
-      </ul>
-    </section>
+    </div>
+
+    <aside class="home-aside o-stack">
+      <section class="o-stack">
+        <h2>{g.home.startHeading}</h2>
+        <ol class="guide__steps">
+          {g.home.start.map((step) => <li>{step}</li>)}
+        </ol>
+      </section>
+
+      <section class="o-stack">
+        <h2>{t.resources}</h2>
+        <ul class="o-stack">
+          {RESOURCES.map((r) => <li><a href={r.url}>{r.label}</a><br /><span class="meta">{g.resources[r.id]!.note}</span></li>)}
+        </ul>
+      </section>
+    </aside>
+    </div>
   </DemoShell>
 </AppLayout>
 

@@ -1,0 +1,41 @@
+---
+// A technical drawing of the idea of the site: a browser window with a chip inside it, traced once on load.
+const pins = [0, 1, 2, 3, 4];
+---
+
+<svg class="blueprint-art" viewBox="0 0 420 320" focusable="false" role="presentation">
+  <g class="layer-1">
+    <rect x="24" y="24" width="372" height="252" pathLength="1"></rect>
+    <path d="M24 58H396" pathLength="1"></path>
+    <circle cx="44" cy="41" r="4.5" pathLength="1"></circle>
+    <circle cx="60" cy="41" r="4.5" pathLength="1"></circle>
+    <circle cx="76" cy="41" r="4.5" pathLength="1"></circle>
+    <rect class="is-thin" x="104" y="34" width="200" height="14" pathLength="1"></rect>
+  </g>
+  <g class="layer-2">
+    <path d="M138 145H96V196H56" pathLength="1"></path>
+    <path d="M138 185H110V240H80" pathLength="1"></path>
+    <path d="M282 145H330V110H368" pathLength="1"></path>
+    <path d="M282 185H318V228H368" pathLength="1"></path>
+    <path d="M210 93V76H250" pathLength="1"></path>
+    <circle class="is-node" cx="56" cy="196" r="4" pathLength="1"></circle>
+    <circle class="is-node" cx="80" cy="240" r="4" pathLength="1"></circle>
+    <circle class="is-node" cx="368" cy="110" r="4" pathLength="1"></circle>
+    <circle class="is-node" cx="368" cy="228" r="4" pathLength="1"></circle>
+    <circle class="is-node" cx="250" cy="76" r="4" pathLength="1"></circle>
+  </g>
+  <g class="layer-3">
+    <rect x="150" y="105" width="120" height="120" pathLength="1"></rect>
+    <rect class="is-thin" x="174" y="129" width="72" height="72" pathLength="1"></rect>
+    {pins.map((i) => <path d={`M${170 + i * 20} 105V93`} pathLength="1"></path>)}
+    {pins.map((i) => <path d={`M${170 + i * 20} 225V237`} pathLength="1"></path>)}
+    {pins.map((i) => <path d={`M150 ${125 + i * 20}H138`} pathLength="1"></path>)}
+    {pins.map((i) => <path d={`M270 ${125 + i * 20}H282`} pathLength="1"></path>)}
+    <circle class="is-core" cx="210" cy="165" r="16" pathLength="1"></circle>
+    <path class="is-thin" d="M210 143V187M188 165H232" pathLength="1"></path>
+  </g>
+  <g class="layer-4">
+    <path class="is-thin" d="M24 304H396M24 296V312M396 296V312M34 300L24 304L34 308M386 300L396 304L386 308" pathLength="1"></path>
+    <path class="is-thin" d="M8 24V276M0 24H16M0 276H16M4 34L8 24L12 34M4 266L8 276L12 266" pathLength="1"></path>
+  </g>
+</svg>

@@ -1,4 +1,5 @@
-/* App-specific rules, on LUZ tokens only. */
+/* App-specific rules, on LUZ tokens only. The look is a technical drawing: thin lines, a drafting grid,
+   diagonal hatching, notched headings. Light mode is drafting paper; dark mode is the blueprint itself. */
 
 /* A terminal look: one monospace sans for everything, headings and running text included. */
 :root {
@@ -8,12 +9,673 @@
   --luz-font-body: var(--luz-font-mono);
   --luz-type-base: 0.9375rem;
   --luz-text-body: var(--luz-text-base);
+  --luz-content-max: 72rem;
+  /* Drawn edges are square: a drafting table has no rounded corners */
+  --luz-radius-sm: 1px;
+  --luz-radius-md: 2px;
+  --bp-header-h: 3.5rem;
+}
+
+/* ---------- Palettes ---------- */
+
+/* One block per color mode, in Luz's themes layer, selected by the data-theme that Luz's boot script
+   always writes on <html> (light, dark or high-contrast). High contrast is Luz's own and is not touched
+   here, apart from the texture variables. */
+
+/* Light: drafting paper */
+@layer luz.themes {
+[data-theme="light"] {
+  --luz-surface-page: #eaf0fb;
+  --luz-surface: #f8faff;
+  --luz-surface-hover: #e2eaf9;
+  --luz-surface-pressed: #d3dff5;
+  --luz-surface-muted: #e7eefb;
+  --luz-surface-strong: #e3ebf9;
+  --luz-text-primary: #0b1f4a;
+  --luz-text-secondary: #26407a;
+  --luz-text-muted: #415688;
+  --luz-text-disabled: #5a6c99;
+  --luz-divider: #b2c4e8;
+  --luz-outline: #5069a8;
+  --luz-focus-ring: #1d4ed8;
+  --luz-brand-primary: #1740b8;
+  --luz-brand-hover: #123195;
+  --luz-brand-active: #0d2574;
+  --luz-brand-subtle: rgba(29, 78, 216, 0.1);
+  --luz-brand-fill: #1d4ed8;
+  --luz-brand-fill-hover: #1a43bb;
+  --luz-brand-fill-active: #153692;
+  --luz-text-on-fill: #fff;
+  --luz-input-bg: #fff;
+  --luz-input-border: #5069a8;
+  --luz-code-comment: #34426a;
+
+  --bp-line: #9db3df;
+  --bp-line-strong: #3a58a8;
+  --bp-bar: rgba(255, 255, 255, 0.7);
+  --bp-hatch: repeating-linear-gradient(135deg, rgba(29, 78, 216, 0.16) 0 1px, transparent 1px 7px);
+  --bp-paper:
+    linear-gradient(rgba(29, 78, 216, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(29, 78, 216, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(180deg, #f5f8ff, #eaf0fb 40rem) top / 100% 40rem no-repeat,
+    #eaf0fb;
+  --bp-backdrop: rgba(11, 31, 74, 0.55);
+}
+
+/* Dark: the blueprint */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --luz-surface-page: #17409f;
+  --luz-surface: #1b46ab;
+  --luz-surface-hover: #1f4cb5;
+  --luz-surface-pressed: #2552bb;
+  --luz-surface-muted: #143a93;
+  --luz-surface-strong: #2350b5;
+  --luz-surface-media: #e8efff;
+  --luz-scrim: rgba(4, 16, 60, 0.7);
+  --luz-text-primary: #fff;
+  --luz-text-secondary: #dbe6ff;
+  --luz-text-muted: #bdd0f8;
+  --luz-text-disabled: #a9bff0;
+  --luz-divider: rgba(255, 255, 255, 0.28);
+  --luz-outline: #a3bbf2;
+  --luz-focus-ring: #ffe08a;
+  --luz-brand-primary: #c4d8ff;
+  --luz-brand-hover: #fff;
+  --luz-brand-active: #fff;
+  --luz-brand-subtle: rgba(255, 255, 255, 0.13);
+  --luz-brand-fill: #fff;
+  --luz-brand-fill-hover: #e3ecff;
+  --luz-brand-fill-active: #cddcff;
+  --luz-text-on-fill: #0e2f84;
+  --luz-input-bg: #123689;
+  --luz-input-border: #a3bbf2;
+  --luz-color-success: #c2f8d8;
+  --luz-color-success-bg: rgba(139, 232, 178, 0.15);
+  --luz-color-danger: #ffd2ce;
+  --luz-color-danger-bg: rgba(255, 120, 120, 0.18);
+  --luz-color-danger-fill: #ffb4ae;
+  --luz-color-warning: #ffe9a8;
+  --luz-color-warning-accent: #ffd45c;
+  --luz-color-warning-bg: rgba(255, 224, 138, 0.15);
+  --luz-color-info: #ecf3ff;
+  --luz-color-info-bg: rgba(255, 255, 255, 0.13);
+  --luz-color-teal: #a2f3e4;
+  --luz-color-teal-bg: rgba(98, 201, 181, 0.13);
+  --luz-color-purple: #ece3ff;
+  --luz-color-purple-bg: rgba(202, 154, 255, 0.13);
+  --luz-color-code: #ece3ff;
+  --luz-code-comment: #c8d6f6;
+  --luz-code-name: #c4d8ff;
+  --luz-code-property: #e6dbff;
+  --luz-code-string: #adf1c8;
+  --luz-code-literal: #ffe08a;
+
+  --bp-line: rgba(255, 255, 255, 0.32);
+  --bp-line-strong: rgba(255, 255, 255, 0.72);
+  --bp-bar: rgba(5, 22, 76, 0.34);
+  --bp-hatch: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0 1px, transparent 1px 7px);
+  --bp-paper:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(180deg, #2557cf, #17409f 40rem) top / 100% 40rem no-repeat,
+    #17409f;
+  --bp-backdrop: rgba(3, 12, 48, 0.62);
+}
+
+/* High contrast: no texture, plain black lines */
+[data-theme="high-contrast"] {
+  --bp-line: #000;
+  --bp-line-strong: #000;
+  --bp-bar: #fff;
+  --bp-hatch: none;
+  --bp-paper: #fff;
+  --bp-backdrop: rgba(0, 0, 0, 0.7);
+}
+}
+
+/* ---------- Page ---------- */
+
+html {
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bp-paper);
+  color: var(--luz-text-primary);
+  overflow-x: clip;
+}
+
+main {
+  flex: 1 0 auto;
+  inline-size: 100%;
+}
+
+::selection {
+  background: var(--luz-brand-fill);
+  color: var(--luz-text-on-fill);
+}
+
+/* ---------- Shell: a sidebar and the page ---------- */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+}
+
+/* The page is a container, so full-width decoration (the hero hatching) follows its width, not the window's */
+.shell__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+/* ---------- Header ---------- */
+
+.site-head {
+  position: relative;
+  z-index: 20;
+  border-block-end: 1px solid var(--bp-line);
+}
+
+.site-head__top {
+  display: flex;
+  align-items: center;
+  gap: var(--luz-space-md);
+  max-width: var(--luz-content-max);
+  margin-inline: auto;
+  padding: var(--luz-space-sm) var(--luz-space-xl);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luz-space-sm);
+  padding: var(--luz-space-xs) var(--luz-space-md);
+  border: 1px solid var(--bp-line-strong);
+  color: var(--luz-text-primary);
+  text-decoration: none;
+  font-size: var(--luz-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--bp-bar);
+  transition: background var(--luz-duration-fast);
+}
+
+.brand:hover {
+  background: var(--luz-surface-hover);
+  color: var(--luz-text-primary);
+}
+
+.brand__mark {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+}
+
+.site-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--luz-space-sm);
+  margin-inline-start: auto;
+}
+
+.menu-btn {
+  display: none;
+  flex-shrink: 0;
+  inline-size: var(--luz-control-lg);
+  block-size: var(--luz-control-lg);
+  padding: var(--luz-space-xs);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--luz-space-2xs);
+  border: 1px solid var(--bp-line-strong);
+  background: var(--bp-bar);
+  color: var(--luz-text-primary);
+  cursor: pointer;
+}
+
+.menu-btn:hover {
+  background: var(--luz-surface-hover);
+}
+
+.menu-btn__bar {
+  display: block;
+  inline-size: 1.25rem;
+  block-size: 1.5px;
+  background: currentcolor;
+}
+
+@media (forced-colors: active) {
+  .menu-btn__bar {
+    background: ButtonText;
+  }
+}
+
+/* ---------- Navigation: every demo, grouped, in a column ---------- */
+
+.site-nav {
+  color: var(--luz-text-primary);
+  background: var(--luz-surface-muted);
+}
+
+.site-nav__inner {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--luz-space-xs) var(--luz-space-xl);
+}
+
+.brand--side {
+  margin: var(--luz-space-md);
+  align-self: flex-start;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  margin-block-start: var(--luz-space-md);
+}
+
+.nav-section__label {
+  display: block;
+  padding: var(--luz-space-xs) var(--luz-space-md);
+  border-block: 1px solid var(--bp-line);
+  font-size: var(--luz-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--luz-text-secondary);
+  background: var(--bp-bar);
+}
+
+.nav-link {
+  display: block;
+  padding: var(--luz-space-xs) var(--luz-space-md);
+  color: var(--luz-text-primary);
+  font-size: var(--luz-text-sm);
+  text-decoration: none;
+  border-inline-start: 3px solid transparent;
+  border-block-end: 1px dashed var(--bp-line);
+  transition: background var(--luz-duration-fast), border-color var(--luz-duration-fast);
+}
+
+.nav-link:hover {
+  background: var(--luz-surface-hover);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--luz-focus-ring);
+  outline-offset: -2px;
+}
+
+.nav-link[aria-current="page"] {
+  font-weight: 700;
+  border-inline-start-color: var(--luz-text-primary);
+  background: var(--luz-brand-subtle);
+}
+
+@media (min-width: 769px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+  }
+
+  /* A popover is hidden and fixed by the browser: on a wide screen it is a sticky column */
+  .site-nav[popover] {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    inset: auto;
+    inset-block-start: 0;
+    align-self: start;
+    inline-size: auto;
+    block-size: 100vh;
+    block-size: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-end: 1px solid var(--bp-line-strong);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bp-line-strong) transparent;
+  }
+
+  .brand--top {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .brand--side {
+    display: none;
+  }
+
+  .site-head {
+    position: sticky;
+    inset-block-start: 0;
+    background: var(--luz-surface-page);
+  }
+
+  .site-head__top {
+    padding: var(--luz-space-sm) var(--luz-space-md);
+    gap: var(--luz-space-sm);
+  }
+
+  .menu-btn {
+    display: flex;
+  }
+
+  .brand--top {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    padding-inline: var(--luz-space-sm);
+    letter-spacing: 0.06em;
+  }
+
+  .brand--top .brand__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .site-head__actions {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    margin-inline-start: 0;
+  }
+
+  /* The drawer: a popover from the start edge */
+  .site-nav[popover] {
+    position: fixed;
+    inset: 0 auto 0 0;
+    inline-size: min(22rem, 88vw);
+    block-size: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-end: 1px solid var(--bp-line-strong);
+    overflow-y: auto;
+    background: var(--luz-surface-page);
+    translate: -100% 0;
+    transition: translate var(--luz-duration-slow) ease, overlay var(--luz-duration-slow) allow-discrete, display var(--luz-duration-slow) allow-discrete;
+  }
+
+  .site-nav[popover]:popover-open {
+    translate: 0 0;
+  }
+
+  @starting-style {
+    .site-nav[popover]:popover-open {
+      translate: -100% 0;
+    }
+  }
+
+  .site-nav[popover]::backdrop {
+    background: var(--bp-backdrop);
+  }
+
+  .nav-link {
+    padding-block: var(--luz-space-sm);
+  }
+
+  /* The language shows as its icon: a square button like the others */
+  .luz-lang-switch__button {
+    inline-size: var(--luz-control-lg);
+    block-size: var(--luz-control-lg);
+    padding: 0;
+    justify-content: center;
+  }
+
+  .luz-lang-switch__name {
+    display: none;
+  }
+}
+
+/* ---------- Headings: a bar with a notch, as on a drawing ---------- */
+
+main h2:not(.guide__title, .luz-faq__title, .luz-card__title) {
+  --notch: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: var(--luz-space-sm);
+  flex: 1 1 auto;
+  min-block-size: 2.5rem;
+  margin: 0;
+  padding: 0 0 0 var(--luz-space-md);
+  border: 1px solid var(--bp-line);
+  background: var(--bp-bar);
+  font-size: var(--luz-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+main h2:not(.guide__title, .luz-faq__title, .luz-card__title)::after {
+  content: "";
+  flex: 1;
+  align-self: stretch;
+  min-inline-size: calc(var(--notch) + 1rem);
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--bp-line-strong) calc(50% - 0.5px), var(--bp-line-strong) calc(50% + 0.5px), transparent calc(50% + 0.5px)) left / var(--notch) 100% no-repeat;
+}
+
+/* The title of each page carries a dimension line under it */
+[data-demo] > header h1 {
+  margin: 0;
+  font-size: clamp(var(--luz-text-2xl), var(--luz-text-xl) + 2.2vw, var(--luz-text-4xl));
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+[data-demo] > header h1::after {
+  content: "";
+  display: block;
+  block-size: 9px;
+  margin-block-start: var(--luz-space-md);
+  background:
+    linear-gradient(var(--bp-line-strong), var(--bp-line-strong)) center / 100% 1px no-repeat,
+    linear-gradient(var(--bp-line-strong), var(--bp-line-strong)) left / 1px 100% no-repeat,
+    linear-gradient(var(--bp-line-strong), var(--bp-line-strong)) right / 1px 100% no-repeat;
+}
+
+/* ---------- Hero (home) ---------- */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--luz-space-xl);
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(var(--luz-space-lg), 4vw, var(--luz-space-2xl));
+  border: 1px solid var(--bp-line-strong);
+}
+
+/* The diagonal hatching runs past the frame to both edges of the window */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset-block: -1px;
+  inset-inline-start: 50%;
+  inline-size: 100cqw;
+  translate: -50% 0;
+  z-index: -2;
+  background: var(--bp-hatch);
+  border-block: 1px solid var(--bp-line);
+}
+
+/* The frame itself is clear paper */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bp-paper);
+}
+
+.hero {
+  margin-block-end: var(--luz-space-lg);
+}
+
+.hero > .o-stack,
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--luz-space-md);
+}
+
+.hero h1 {
+  font-size: clamp(var(--luz-text-3xl), var(--luz-text-xl) + 4.6vw, calc(var(--luz-text-4xl) * 1.5));
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.hero__lead {
+  max-inline-size: 38rem;
+  font-size: var(--luz-text-lg);
+  color: var(--luz-text-secondary);
+}
+
+.hero__art {
+  display: none;
+  color: var(--luz-text-primary);
+}
+
+@container (min-width: 46rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .hero__art {
+    display: block;
+  }
+}
+
+.blueprint-art {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 26rem;
+  margin-inline: auto;
+  block-size: auto;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.4;
+  stroke-linecap: square;
+}
+
+.blueprint-art .is-thin {
+  stroke-width: 1;
+  opacity: 0.75;
+}
+
+.blueprint-art .is-node {
+  fill: var(--luz-surface-page);
+}
+
+/* Each layer of the drawing is traced once, one after the other */
+@media (prefers-reduced-motion: no-preference) {
+  .blueprint-art [pathLength] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: trace 1.4s ease-out forwards;
+  }
+
+  .blueprint-art .layer-2 [pathLength] {
+    animation-delay: 0.35s;
+  }
+
+  .blueprint-art .layer-3 [pathLength] {
+    animation-delay: 0.7s;
+  }
+
+  .blueprint-art .layer-4 [pathLength] {
+    animation-delay: 1.05s;
+  }
+
+  .blueprint-art .is-core {
+    animation: pulse 3.2s ease-in-out 2s infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+}
+
+@keyframes trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---------- Home layout ---------- */
+
+.home-grid {
+  display: grid;
+  gap: var(--luz-space-xl);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container (min-width: 72rem) {
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    align-items: start;
+  }
+
+  .home-aside {
+    position: sticky;
+    inset-block-start: var(--luz-space-md);
+  }
+}
+
+.home-main,
+.home-aside {
+  min-inline-size: 0;
+}
+
+.home-main > section[id],
+.home-aside > section {
+  scroll-margin-block-start: calc(var(--bp-header-h) + var(--luz-space-md));
+}
+
+.hero__cta {
+  margin-block-start: var(--luz-space-xs);
+}
+
+.hero .api-pill {
+  font-size: var(--luz-text-xs);
+}
+
+/* ---------- Panels ---------- */
+
+.luz-card {
+  position: relative;
+  border: 1px solid var(--bp-line);
+  background: var(--luz-surface);
+  box-shadow: none;
 }
 
 .output {
   min-height: 3rem;
   padding: var(--luz-space-md);
-  border: 1px solid var(--luz-divider);
+  border: 1px solid var(--bp-line-strong);
   border-radius: var(--luz-radius-md);
   background: var(--luz-surface);
   white-space: pre-wrap;
@@ -47,6 +709,9 @@
   display: inline-flex;
   gap: var(--luz-space-xs);
   align-items: center;
+  padding: var(--luz-space-3xs) var(--luz-space-xs) var(--luz-space-3xs) var(--luz-space-sm);
+  border: 1px solid var(--bp-line);
+  background: var(--bp-bar);
   font-size: var(--luz-text-sm);
 }
 
@@ -69,7 +734,7 @@
   max-height: 28rem;
   overflow-y: auto;
   padding: var(--luz-space-md);
-  border: 1px solid var(--luz-divider);
+  border: 1px solid var(--bp-line-strong);
   border-radius: var(--luz-radius-md);
   background: var(--luz-surface-muted);
 }
@@ -91,13 +756,13 @@
 .chat-msg[data-role="assistant"] {
   align-self: flex-start;
   background: var(--luz-surface);
-  border: 1px solid var(--luz-divider);
+  border: 1px solid var(--bp-line);
 }
 
 mark.fix {
   background: var(--luz-brand-subtle);
   color: inherit;
-  border-bottom: 2px solid var(--luz-brand-fill);
+  border-bottom: 2px solid var(--luz-text-primary);
   border-radius: var(--luz-radius-sm);
   cursor: help;
 }
@@ -112,17 +777,266 @@ mark.fix {
   margin-block-start: var(--luz-space-sm);
 }
 
+/* ---------- Compatibility banner: slim, full width, sticky at the foot of the window ---------- */
+
+.compat-banner {
+  --tone: var(--luz-color-warning-accent);
+  --tone-fill: color-mix(in srgb, var(--tone) 24%, var(--luz-surface-page));
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 15;
+  border-block-start: 2px solid var(--tone);
+  background: var(--tone-fill);
+  color: var(--luz-text-primary);
+  padding-block-end: env(safe-area-inset-bottom);
+}
+
+.compat-banner[data-tone="error"] {
+  --tone: var(--luz-color-danger);
+}
+
+/* A hazard stripe on the top edge */
+.compat-banner::before {
+  content: "";
+  display: block;
+  block-size: var(--luz-space-2xs);
+  background: repeating-linear-gradient(135deg, var(--tone) 0 var(--luz-space-2xs), transparent var(--luz-space-2xs) var(--luz-space-xs));
+}
+
+.compat-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--luz-space-sm);
+  max-width: var(--luz-content-max);
+  margin-inline: auto;
+  padding: var(--luz-space-xs) var(--luz-space-xl);
+}
+
+.compat-banner__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  inline-size: var(--luz-space-lg);
+  block-size: var(--luz-space-lg);
+  background: var(--tone);
+  color: var(--luz-surface-page);
+}
+
+/* The error is a prohibition sign, not a cross: a cross is the close button */
+.compat-banner__glyph {
+  inline-size: var(--luz-space-md);
+  block-size: var(--luz-space-md);
+  max-inline-size: none;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.compat-banner[data-tone="error"] [data-glyph="warning"],
+.compat-banner:not([data-tone="error"]) [data-glyph="error"] {
+  display: none;
+}
+
+/* The message is one line and one link; the full text is in its tooltip */
+.compat-banner__text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  font-size: var(--luz-text-sm);
+  text-decoration: none;
+}
+
+.compat-banner__text:hover {
+  text-decoration: underline;
+}
+
+.compat-banner__text strong {
+  margin-inline-end: var(--luz-space-xs);
+}
+
+.compat-banner__guide {
+  flex-shrink: 0;
+  color: inherit;
+  font-size: var(--luz-text-sm);
+  font-weight: 700;
+}
+
+.compat-banner__close {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  inline-size: var(--luz-space-lg);
+  block-size: var(--luz-space-lg);
+  padding: 0;
+  border: 1px solid var(--tone);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.compat-banner__close:hover {
+  background: var(--tone);
+  color: var(--luz-surface-page);
+}
+
+.compat-banner__close:focus-visible,
+.compat-banner__text:focus-visible,
+.compat-banner__guide:focus-visible {
+  outline: 2px solid var(--luz-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Luz caps an svg at 100% of its box, which is nothing inside an empty button */
+.compat-banner__close svg {
+  inline-size: var(--luz-space-md);
+  block-size: var(--luz-space-md);
+  max-inline-size: none;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: square;
+}
+
+@media (max-width: 768px) {
+  .compat-banner__inner {
+    padding-inline: var(--luz-space-md);
+  }
+
+  /* On a phone the title is the message; the rest is one tap away in the help link */
+  .compat-banner__text span,
+  .compat-banner__guide {
+    display: none;
+  }
+}
+
+/* ---------- A demo this browser cannot run: its tool is greyed out and inert ---------- */
+
+.workbench[data-disabled] {
+  opacity: 0.5;
+  filter: grayscale(1);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Anything disabled shows the not-allowed cursor */
+:is(button, input, select, textarea, .luz-btn):disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.workbench[data-disabled] .workbench__bar::after {
+  content: attr(data-reason);
+  align-self: center;
+  margin-inline-start: auto;
+  padding-inline: var(--luz-space-md);
+  font-size: var(--luz-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* The demo cards are numbered like the parts of a drawing, and the whole card is the link */
 .demo-grid {
   list-style: none;
   padding: 0;
+  counter-reset: part;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+}
+
+.demo-grid > li {
+  counter-increment: part;
+  padding-block-start: var(--luz-space-lg);
+  transition: translate var(--luz-duration-base), border-color var(--luz-duration-base), background var(--luz-duration-base);
+  background:
+    linear-gradient(var(--bp-line-strong), var(--bp-line-strong)) right 6px bottom 6px / 12px 1px no-repeat,
+    linear-gradient(var(--bp-line-strong), var(--bp-line-strong)) right 6px bottom 6px / 1px 12px no-repeat,
+    var(--luz-surface);
+}
+
+.demo-grid > li::before {
+  content: counter(part, decimal-leading-zero);
+  position: absolute;
+  inset-block-start: var(--luz-space-xs);
+  inset-inline-start: var(--luz-space-md);
+  font-size: var(--luz-text-xs);
+  letter-spacing: 0.14em;
+  color: var(--luz-text-muted);
+}
+
+.demo-grid > li:hover,
+.demo-grid > li:focus-within {
+  border-color: var(--bp-line-strong);
+  background-color: var(--luz-surface-hover);
+  translate: 0 -2px;
 }
 
 .demo-grid .luz-card__title a {
   text-decoration: none;
 }
 
-.sidebar-group + .sidebar-group {
-  margin-block-start: var(--luz-space-sm);
+.demo-grid .luz-card__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.demo-grid .luz-card__title a:focus-visible {
+  outline: none;
+}
+
+.demo-grid > li:has(a:focus-visible) {
+  outline: 2px solid var(--luz-focus-ring);
+  outline-offset: 2px;
+}
+
+/* The tool of a demo is a raised panel on the paper: a title bar, a solid surface and a hard shadow.
+   Everything outside it is explanation. */
+.workbench {
+  margin-block-start: var(--luz-space-md);
+  border: 1px solid var(--bp-line-strong);
+  background: var(--luz-surface);
+  box-shadow: var(--luz-space-xs) var(--luz-space-xs) 0 var(--bp-line);
+}
+
+.workbench__bar {
+  display: flex;
+  align-items: stretch;
+  min-block-size: var(--luz-space-xl);
+  border-block-end: 1px solid var(--bp-line-strong);
+  background: var(--bp-hatch), var(--luz-surface-muted);
+}
+
+.workbench__label {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--luz-space-md) var(--luz-space-xl);
+  background: var(--luz-surface-strong);
+  font-size: var(--luz-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - var(--luz-space-md)) 100%, 0 100%);
+}
+
+.workbench__body {
+  padding: var(--luz-space-lg);
+}
+
+@media (max-width: 640px) {
+  .workbench__body {
+    padding: var(--luz-space-md);
+  }
+}
+
+/* What is typed and what comes out sit in wells, lower than the panel */
+.workbench .output,
+.workbench .chat-log {
+  background: var(--luz-surface-muted);
 }
 
 /* "What it does / how to use it" at the top of each demo */
@@ -130,23 +1044,176 @@ mark.fix {
   display: grid;
   gap: var(--luz-space-lg);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  border: 1px dashed var(--bp-line-strong);
+  background: transparent;
+}
+
+.guide__col > p {
+  color: var(--luz-text-secondary);
 }
 
 .guide__title {
   margin: 0;
-  font-size: var(--luz-text-base);
-  font-weight: 600;
+  font-size: var(--luz-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .guide__col > p {
   margin: 0;
 }
 
+/* Steps are numbered in small squares */
 .guide__steps {
   margin: 0;
-  padding-inline-start: var(--luz-space-lg);
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.guide__steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: var(--luz-space-sm);
+  align-items: start;
 }
 
 .guide__steps li + li {
-  margin-block-start: var(--luz-space-xs);
+  margin-block-start: var(--luz-space-sm);
+}
+
+.guide__steps li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 1px solid var(--bp-line-strong);
+  font-size: var(--luz-text-xs);
+  font-weight: 700;
+}
+
+/* ---------- Tables ---------- */
+
+.luz-table-wrap {
+  border: 1px solid var(--bp-line);
+}
+
+.luz-table thead th {
+  font-size: var(--luz-text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Footer ---------- */
+
+.site-foot {
+  margin-block-start: var(--luz-space-3xl);
+  border-block-start: 1px solid var(--bp-line-strong);
+  background: var(--bp-bar);
+}
+
+.site-foot__hatch {
+  block-size: 1.25rem;
+  background: var(--bp-hatch);
+  border-block-end: 1px solid var(--bp-line);
+}
+
+.site-foot__grid {
+  display: grid;
+  gap: var(--luz-space-xl);
+  grid-template-columns: minmax(0, 1fr);
+  max-width: var(--luz-content-max);
+  margin-inline: auto;
+  padding: var(--luz-space-xl);
+}
+
+@media (min-width: 769px) {
+  .site-foot__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  }
+
+  .site-foot .site-foot__cols {
+    display: none;
+  }
+}
+
+.site-foot__title {
+  margin: 0 0 var(--luz-space-sm);
+  font-size: var(--luz-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.site-foot__cols {
+  display: grid;
+  gap: var(--luz-space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+}
+
+.site-foot__label {
+  display: block;
+  margin-block-end: var(--luz-space-2xs);
+  font-size: var(--luz-text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--luz-text-muted);
+}
+
+.site-foot ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-foot li {
+  margin: 0;
+  padding-block: var(--luz-space-3xs);
+}
+
+/* The resources run in columns, so the footer stays short */
+.site-foot__links {
+  columns: 2 14rem;
+  column-gap: var(--luz-space-lg);
+}
+
+.site-foot__links li {
+  break-inside: avoid;
+}
+
+.site-foot a {
+  font-size: var(--luz-text-sm);
+}
+
+.site-foot__legal {
+  margin: 0;
+  padding: var(--luz-space-md) var(--luz-space-xl);
+  border-block-start: 1px solid var(--bp-line);
+  text-align: center;
+}
+
+.site-foot__github {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luz-space-2xs);
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.site-foot__github svg {
+  inline-size: var(--luz-space-md);
+  block-size: var(--luz-space-md);
+  max-inline-size: none;
+  fill: currentcolor;
+}
+
+@media (max-width: 640px) {
+  .site-head__top,
+  .site-foot__grid {
+    padding-inline: var(--luz-space-md);
+  }
+
 }

@@ -54,6 +54,7 @@ export const es: Messages = {
     how: "Cómo se usa",
     tip: "Conviene saber",
     basedOn: "Basada en la demo",
+    try: "Pruébalo",
   },
   common: {
     run: "Ejecutar",
@@ -102,6 +103,7 @@ export const es: Messages = {
     recheck: "Comprobar de nuevo",
     help: "¿Qué puedo hacer?",
     guide: "Guía de configuración de Chrome",
+    dismiss: "Cerrar aviso",
     tableAria: "Comprobaciones de compatibilidad",
     colCheck: "Comprobación",
     colResult: "Resultado",

@@ -2,12 +2,11 @@
 import { ClientRouter } from "astro:transitions";
 import "@luz-ds/tokens/css";
 import "@luz-ds/core/css";
-import "@luz-ds/catalog/components/sidebar.css";
-import "@luz-ds/catalog/components/app-bar.css";
 import "@luz-ds/catalog/components/lang-switch.css";
 import "../styles/app.css";
 import themeBoot from "@luz-ds/core/theme-boot?raw";
-import { DEMOS, GROUPS } from "../data/demos";
+import CompatBanner from "../components/CompatBanner.astro";
+import { DEMOS, GROUPS, RESOURCES } from "../data/demos";
 import { LANGS, LANG_NAMES, pageHref, swapLang } from "../i18n";
 import { i18n } from "../i18n/server";
 
@@ -31,6 +30,7 @@ const current = Astro.url.pathname;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.svg`} />
     <title>{title} · {m.site.name}</title>
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(swapLang(current, l), Astro.site)} />)}
     <script is:inline set:html={bootScript} />
@@ -38,88 +38,132 @@ const current = Astro.url.pathname;
   </head>
   <body>
     <a class="luz-skip-link" href="#main-content">{m.nav.skip}</a>
-    <div class="o-shell">
-      <nav class="luz-sidebar" id="app-nav" aria-label={m.nav.main} popover>
-        <a class="luz-sidebar__brand" href={pageHref(lang)}>
-          <span class="luz-sidebar__brand-name">{m.site.name}</span>
+    <div class="shell">
+      <nav class="site-nav" id="app-nav" aria-label={m.nav.main} popover>
+        <a class="brand brand--side" href={pageHref(lang)}>
+          <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="6" y="6" width="12" height="12" />
+              <rect x="9.5" y="9.5" width="5" height="5" />
+              <path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3" />
+            </svg>
+          <span class="brand__name">{m.site.name}</span>
         </a>
-        {
-          GROUPS.map((group) => (
-            <div class="luz-sidebar__section">
-              <span class="luz-sidebar__section-label">{m.groups[group]}</span>
-              {DEMOS.filter((d) => d.group === group).map((d) => (
-                <a
-                  class="luz-sidebar__link"
-                  href={pageHref(lang, d.slug)}
-                  aria-current={current === pageHref(lang, d.slug) ? "page" : undefined}
-                >
-                  {g.demos[d.slug]!.title}
-                </a>
-              ))}
-            </div>
-          ))
-        }
+        <div class="site-nav__inner">
+          {
+            GROUPS.map((group) => (
+              <div class="nav-section">
+                <span class="nav-section__label">{m.groups[group]}</span>
+                {DEMOS.filter((d) => d.group === group).map((d) => (
+                  <a class="nav-link" href={pageHref(lang, d.slug)} aria-current={current === pageHref(lang, d.slug) ? "page" : undefined}>
+                    {g.demos[d.slug]!.title}
+                  </a>
+                ))}
+              </div>
+            ))
+          }
+        </div>
       </nav>
-      <div class="o-main">
-        <header class="luz-app-bar o-sticky">
-          <div class="o-row">
-            <button class="luz-nav-toggle" type="button" popovertarget="app-nav" aria-label={m.nav.menu}>
-              <span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span>
+      <div class="shell__main">
+        <header class="site-head">
+          <div class="site-head__top">
+            <button class="menu-btn" type="button" popovertarget="app-nav" aria-label={m.nav.menu}>
+              <span class="menu-btn__bar"></span><span class="menu-btn__bar"></span><span class="menu-btn__bar"></span>
             </button>
-            <p class="luz-app-bar__product">{m.site.name}</p>
-            <div class="o-row luz-app-bar__actions">
-              <luz-lang-switch>
-                <button class="luz-lang-switch__button" type="button" popovertarget="lang-menu">
-                  <svg class="luz-lang-switch__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" />
-                  </svg>
-                  <span class="u-sr-only">{m.nav.language}: </span><span class="luz-lang-switch__name">{LANG_NAMES[lang]}</span>
-                </button>
-                <nav class="luz-lang-switch__menu" id="lang-menu" popover aria-labelledby="lang-title">
-                  <p class="luz-lang-switch__title" id="lang-title">{m.nav.language}</p>
-                  <ul class="luz-lang-switch__list">
-                    {
-                      LANGS.map((l) => (
-                        <li>
-                          <a
-                            class="luz-lang-switch__link"
-                            href={swapLang(current, l)}
-                            lang={l}
-                            hreflang={l}
-                            data-lang-link={l}
-                            data-astro-reload
-                            aria-current={l === lang ? "page" : undefined}
-                          >
-                            {LANG_NAMES[l]}
-                          </a>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </nav>
-              </luz-lang-switch>
-              <luz-theme-mode inline transition:persist="mode">
-                <fieldset class="luz-theme-mode__group">
-                  <legend class="luz-theme-mode__legend">{m.nav.colorMode}</legend>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="auto" checked />{m.nav.auto}</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="light" />{m.nav.light}</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="dark" />{m.nav.dark}</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="high-contrast" />{m.nav.highContrast}</label>
-                </fieldset>
-              </luz-theme-mode>
-            </div>
+            <a class="brand brand--top" href={pageHref(lang)}>
+              <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="6" y="6" width="12" height="12" />
+              <rect x="9.5" y="9.5" width="5" height="5" />
+              <path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3" />
+            </svg>
+              <span class="brand__name">{m.site.name}</span>
+            </a>
+        <div class="site-head__actions">
+          <luz-lang-switch>
+            <button class="luz-lang-switch__button" type="button" popovertarget="lang-menu">
+              <svg class="luz-lang-switch__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" />
+              </svg>
+              <span class="u-sr-only">{m.nav.language}: </span><span class="luz-lang-switch__name">{LANG_NAMES[lang]}</span>
+            </button>
+            <nav class="luz-lang-switch__menu" id="lang-menu" popover aria-labelledby="lang-title">
+              <p class="luz-lang-switch__title" id="lang-title">{m.nav.language}</p>
+              <ul class="luz-lang-switch__list">
+                {
+                  LANGS.map((l) => (
+                    <li>
+                      <a
+                        class="luz-lang-switch__link"
+                        href={swapLang(current, l)}
+                        lang={l}
+                        hreflang={l}
+                        data-lang-link={l}
+                        data-astro-reload
+                        aria-current={l === lang ? "page" : undefined}
+                      >
+                        {LANG_NAMES[l]}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </nav>
+          </luz-lang-switch>
+          <luz-theme-mode inline transition:persist="mode">
+            <fieldset class="luz-theme-mode__group">
+              <legend class="luz-theme-mode__legend">{m.nav.colorMode}</legend>
+              <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="auto" checked /><svg class="luz-theme-mode__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 1 0 18z" /></svg>{m.nav.auto}</label>
+              <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="light" /><svg class="luz-theme-mode__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>{m.nav.light}</label>
+              <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="dark" /><svg class="luz-theme-mode__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4 8 8 0 1 0 20 14.2z" /></svg>{m.nav.dark}</label>
+              <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="high-contrast" /><svg class="luz-theme-mode__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentcolor" /></svg>{m.nav.highContrast}</label>
+            </fieldset>
+          </luz-theme-mode>
+        </div>
           </div>
         </header>
-        <main class="o-container o-stack" id="main-content" tabindex="-1">
-          <slot />
-        </main>
-        <footer class="o-container">
-          <p class="meta">
-            {m.footer.text}
-            {m.footer.builtWith} <a href="https://github.com/nandovejer/luz">Luz DS</a>, Astro {m.footer.and} TypeScript.
-          </p>
-        </footer>
+    <main class="o-container o-stack" id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <div class="site-foot__hatch" aria-hidden="true"></div>
+      <div class="site-foot__grid">
+        <div class="o-stack">
+          <p class="site-foot__title">{m.site.name}</p>
+          <p class="meta">{m.footer.text}</p>
+        </div>
+        <div class="site-foot__cols">
+          {
+            GROUPS.map((group) => (
+              <div>
+                <span class="site-foot__label">{m.groups[group]}</span>
+                <ul>
+                  {DEMOS.filter((d) => d.group === group).map((d) => (
+                    <li><a href={pageHref(lang, d.slug)}>{g.demos[d.slug]!.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+        <div>
+          <p class="site-foot__title">{m.status.resources}</p>
+          <ul class="site-foot__links">
+            {RESOURCES.map((r) => <li><a href={r.url}>{r.label}</a></li>)}
+          </ul>
+        </div>
+      </div>
+      <p class="meta site-foot__legal">
+        {m.footer.builtWith} <a href="https://github.com/nandomunoz/luz">Luz DS</a>, Astro {m.footer.and} TypeScript.
+        <span aria-hidden="true">·</span>
+        <a class="site-foot__github" href="https://github.com/nandomunoz">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          nandomunoz
+        </a>
+      </p>
+    </footer>
+        <CompatBanner />
       </div>
     </div>
   </body>

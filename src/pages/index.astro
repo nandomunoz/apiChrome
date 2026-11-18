@@ -10,6 +10,7 @@ const targets = Object.fromEntries(LANGS.map((l) => [l, pageHref(l)]));
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Chrome Local AI</title>
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.svg`} />
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(targets[l]!, Astro.site)} />)}
     <script is:inline define:vars={{ targets, key: LANG_KEY }}>
       // The language chosen last time, else the browser's, else English.

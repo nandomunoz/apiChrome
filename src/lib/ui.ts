@@ -71,6 +71,17 @@ function showApiStatus(root: HTMLElement, engine: LocalAIEngine, slug: string): 
       alert.hidden = false;
       $$(root, "[data-run]").forEach((button) => ((button as HTMLButtonElement).disabled = true));
     }
+    // The tool is greyed out and its inside inert; the frame stays live so it can show the not-allowed cursor
+    const bench = root.querySelector<HTMLElement>(".workbench");
+    const bar = bench?.querySelector<HTMLElement>(".workbench__bar");
+    const body = bench?.querySelector<HTMLElement>(".workbench__body");
+    if (bench && bar && body) {
+      const off = missing.length > 0;
+      bench.toggleAttribute("data-disabled", off);
+      body.inert = off;
+      if (off) bar.dataset.reason = m().tag[status[missing[0]!]!];
+      else delete bar.dataset.reason;
+    }
   };
   void engine.status((api, state) => {
     if (!live) return;
